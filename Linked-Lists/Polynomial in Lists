@@ -1,0 +1,86 @@
+struct Term {
+  int coef;
+  int exp;
+
+  Term Set(int c, int e) {
+    coef = c;
+    exp  = e;
+    return *this;
+  }
+};
+
+template <class T>
+class Chain;
+
+template <class T>
+class CircularList;
+
+template <class T>
+class ChainNode {
+  friend class Chain<T>;
+  friend class CircularList<T>;
+
+ private:
+  T data;
+  ChainNode<T>* link;
+};
+
+template <class T>
+class Chain {
+ public:
+  Chain() {
+    first = 0;
+  }
+
+  Chain<T>begin() const {
+    return *this;
+  }
+
+  //在链表的末尾插入元素
+  void InsertBack(T const& e) {
+    if (first) {
+      last->link = new ChainNode<T>(e);
+      last       = last->link;
+    } else {
+      first = new ChainNode<T>(e);
+      last  = first;
+    }
+  }
+
+  //链接两个链表
+  void Concatenate(Chain<T> const& b) {
+    if (first) {
+      last->link = b.first;
+      last       = b.last;
+    } else {
+      first = b.first;
+      last  = b.last;
+    }
+  }
+
+  //逆转链表
+  void Reverse() {
+    ChainNode<T>* current  = first;
+    ChainNode<T>* previous = 0;
+    while (current) {
+      ChainNode<T>* r = previous;
+      previous        = current;
+      current         = current->link;
+      previous->link  = r;
+    }
+    first = previous;
+    last  = first;
+  }
+
+ private:
+  ChainNode<T>* first;
+  ChainNode<T>* last;
+};
+
+class Polynomial {
+ public:
+  Polynomial operator+(Polynomial const& b) const;
+
+ private:
+  Chain<Term> poly;
+};

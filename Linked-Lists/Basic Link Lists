@@ -1,0 +1,184 @@
+//组合类
+/*class ThreeLetterChain;
+
+class ThreeLetterNode {
+  friend class ThreeLetterChain;
+
+ private:
+  char data[3];
+  ThreeLetterNode* link;
+};
+
+class ThreeLetterChain {
+ public:
+
+ private:
+  ThreeLetterNode* first;
+};*/
+
+//嵌套类
+/*class ThreeLetterChain {
+ public:
+
+ private:
+  class ThreeLetterNode {
+   public:
+    char data[3];
+    ThreeLetterNode* link;
+  };
+  ThreeLetterNode* first;
+};*/
+
+//模板实现链表
+template <class T>
+class Chain;
+
+template <class T>
+class CircularList;
+
+template <class T>
+class ChainNode {
+  friend class Chain<T>;
+  friend class CircularList<T>;
+
+ private:
+  T data;
+  ChainNode<T>* link;
+};
+
+template <class T>
+class Chain {
+ public:
+  Chain() {
+    first = 0;
+  }
+
+  //在链表的末尾插入元素
+  void InsertBack(T const& e) {
+    if (first) {
+      last->link = new ChainNode<T>(e);
+      last       = last->link;
+    } else {
+      first = new ChainNode<T>(e);
+      last  = first;
+    }
+  }
+
+  //链接两个链表
+  void Concatenate(Chain<T> const& b) {
+    if (first) {
+      last->link = b.first;
+      last       = b.last;
+    } else {
+      first = b.first;
+      last  = b.last;
+    }
+  }
+
+  //逆转链表
+  void Reverse() {
+    ChainNode<T>* current  = first;
+    ChainNode<T>* previous = 0;
+    while (current) {
+      ChainNode<T>* r = previous;
+      previous        = current;
+      current         = current->link;
+      previous->link  = r;
+    }
+    first = previous;
+    last  = first;
+  }
+
+ private:
+  ChainNode<T>* first;
+  ChainNode<T>* last;
+};
+
+//模板迭代器
+template <class T>
+class ChainIterator {
+ public:
+  ChainIterator(ChainNode<T>* startNode = 0) {
+    current = startNode;
+  }
+
+  T& operator*() const {
+    return current->data;
+  }
+  T* operator->() const {
+    return &current->data;
+  }
+
+  ChainIterator& operator++() {
+    current = current->link;
+    return *this;
+  }
+  ChainIterator operator++(int) {
+    ChainIterator old = *this;
+    current           = current->link;
+    return old;
+  }
+
+  bool operator!=(ChainIterator const right) const {
+    return current != right.current;
+  }
+  bool operator==(ChainIterator const right) const {
+    return current == right.current;
+  }
+
+ private:
+  ChainNode<T>* current;
+};
+
+//循环链表
+template <class T>
+class CircularList {
+ public:
+  void InsertFront(T const& e) {
+    ChainNode<T>* newNode = new ChainNode<T>(e);
+    if (last) {
+      newNode->link = last->link;
+      last->link    = newNode;
+    } else {
+      last          = newNode;
+      newNode->link = newNode;
+    }
+  }
+
+  //获得一个节点
+  ChainNode<T>* GetNode() {
+    ChainNode<T>* x;
+    if (av) {
+      x  = av;
+      av = av->link;
+    } else {
+      x = new ChainNode<T>();
+    }
+    return x;
+  }
+
+  //返回一个节点
+  void RetNode(ChainNode<T>*& x) {
+    x->link = av;
+    av      = x;
+    x       = 0;
+  }
+
+  //删除一个循环链表
+  ~CircularList() {
+    if (last) {
+      ChainNode<T>* first = last->link;
+      last->link          = av;
+      av                  = first;
+      last                = 0;
+    }
+  }
+
+ private:
+  ChainNode<T>* last;
+
+  //指向被删除节点的链表的头指针
+  static ChainNode<T>* av;
+};
+
+

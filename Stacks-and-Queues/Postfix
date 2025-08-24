@@ -1,0 +1,23 @@
+中缀转后缀
+
+#include <iostream>
+
+void Postfix(Expression e) {
+  Stack<Token> stack;
+  stack.push('#');
+  for (Token x = NextToken(e); x != '#'; x = NextToken(e)) {
+    if (x is operand) {
+      std::cout << x;
+    } else if (x == ')') {
+      for (; stack.Top() != '('; stack.pop()) {
+        std::cout << stack.Top();
+      }
+      stack.Pop();
+    } else {
+      for(;isp(stack.Top())<=icp(x);stack.Pop()){
+        std::cout << stack.Top();
+        }
+      stack.Push(x);
+    }
+  }
+}
